@@ -30,8 +30,8 @@ main:
 	addi $s2, $s2, -1
 	
 	
-	#jal quick_sort_iterative
-	#nop
+	jal quick_sort_iterative
+	nop
 	
 	jal insertion_sort
 	nop
@@ -158,8 +158,11 @@ quick_sort_iterative:
 		nop
 		
 		addi $v0, $v0, -1
-			
+		
 		ble $v0, $s1, skip1
+		nop
+		sub $s7, $v0, $s1
+		blt $s7, 10, skip1
 		nop
 			addi $t1, $t1, 8
 			sw $s1, -8($t1)
@@ -167,7 +170,11 @@ quick_sort_iterative:
 		skip1:
 		
 		addi $v0, $v0, 2
+		
 		bge $v0, $s2, skip2
+		nop
+		sub $s7, $s2, $v0
+		blt $s7, 10, skip2
 		nop
 			addi $t1, $t1, 8
 			sw $v0, -8($t1)
