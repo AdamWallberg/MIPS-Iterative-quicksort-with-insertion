@@ -1104,7 +1104,6 @@ main:
 			bgt $s6, $s3, skip3	# if(arr[j <= pivot])
 			nop
 				addi $s4, $s4, 4	# i++
-				#add $t8, $s4, $s0	# &arr[i]
 				
 				lw $t6, ($s4)		# Swap
 				sw $t6, ($s5)
@@ -1118,7 +1117,6 @@ main:
 		L2E:
 		
 		addi $s4, $s4, 4	# i++
-		#add $t9, $s4, $s0	# &arr[i + 1]
 		
 		lw $t6, ($t5)		# Swap
 		lw $t7, ($s4)
