@@ -29,7 +29,6 @@ main:
 	move $t4, $s2 	# t4 = high
 	addi $s2, $s2, -1
 	
-	
 	jal quick_sort_iterative
 	nop
 	
@@ -73,14 +72,15 @@ insertion_sort:
 	# t4 = high
 	
 	li $t0, 1
+	addi $t2, $s0, 4
 	
 	L3:
 	bge $t0, $t4, L3E
 	nop
 		
-		sll $t3, $t0, 2
-		add $t3, $t3, $s0
-		lw $t3, 0($t3)		# key = arr[i];
+		#sll $t3, $t0, 2
+		#add $t3, $t3, $s0
+		lw $t3, 0($t2)		# key = arr[i];
 		
 		addi $t1, $t0, -1	# j = i-1;
 		
@@ -97,13 +97,8 @@ insertion_sort:
 			sll $t6, $t6, 2
 			add $t6, $t6, $s0	# &arr[j + 1]
 			
-			sll $t5, $t1, 2
-			add $t5, $t5, $s0	# &arr[j]
-			lw $t5, 0($t5)		# arr[j]
-			
 			sw $t5, 0($t6)		# arr[j+1] = arr[j];
-			
-			addi $t1, $t1, -1	# j = j - 1
+			addi $t1, $t1, -1	# j--
 			
 			sll $t5, $t1, 2
 			add $t5, $t5, $s0	# &arr[j]
@@ -119,6 +114,7 @@ insertion_sort:
 		sw $t3, 0($t6)	# arr[j+1] = key;
 		
 		addi $t0, $t0, 1
+		addi $t2, $t2, 4
 		j L3
 		nop
 	L3E:
