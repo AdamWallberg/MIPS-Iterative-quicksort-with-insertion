@@ -64,8 +64,6 @@ print_data:
 	nop
 	
 insertion_sort:
-	# TODO: Implement insertion sort
-	
 	# t0 = i
 	# t1 = j
 	# t3 = key
@@ -77,9 +75,6 @@ insertion_sort:
 	L3:
 	bge $t0, $t4, L3E
 	nop
-		
-		#sll $t3, $t0, 2
-		#add $t3, $t3, $s0
 		lw $t3, 0($t2)		# key = arr[i];
 		
 		addi $t1, $t0, -1	# j = i-1;
@@ -115,6 +110,7 @@ insertion_sort:
 		
 		addi $t0, $t0, 1
 		addi $t2, $t2, 4
+		
 		j L3
 		nop
 	L3E:
