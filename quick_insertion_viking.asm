@@ -1133,7 +1133,7 @@ main:
 		ble $v0, $s1, skip1
 		nop
 		sub $s7, $v0, $s1
-		blt $s7, 12, skip1
+		blt $s7, 17, skip1
 		nop
 			addi $t1, $t1, 8
 			sw $s1, -8($t1)
@@ -1145,7 +1145,7 @@ main:
 		bge $v0, $s2, skip2
 		nop
 		sub $s7, $s2, $v0
-		blt $s7, 12, skip2
+		blt $s7, 17, skip2
 		nop
 			addi $t1, $t1, 8
 			sw $v0, -8($t1)
