@@ -18,6 +18,7 @@ data:
 	.word	0x31093c54
 	.word	0x42102f37
 	.word	0x00ee655b
+
 newline:
 	.asciiz "\n"
 
@@ -193,41 +194,38 @@ partition:
 	sll $s3, $s2, 2
 	add $s3, $s3, $s0	# &arr[high]
 	lw $s3, ($s3)		# arr[high]
+	
 	addi $s4, $s1, -1	# i = low - 1
-	move $s5, $s1		# j = low
+	sll $s4, $s4, 2
+	sll $s5, $s1, 2		# j = low
 	
 	
 	L2: # for(j = low; j < high; j++)
-		bge $s5, $s2, L2E
+		srl $t8, $s5, 2
+		bge $t8, $s2, L2E
 		nop
 		
-		sll $s6, $s5, 2
-		add $s6, $s6, $s0
-		lw $s6, ($s6)			# arr[j]
+		add $s7, $s5, $s0		# &arr[j]
+		lw $s6, ($s7)			# arr[j]
 		
 		bgt $s6, $s3, skip3	# if(arr[j <= pivot])
 		nop
-			addi $s4, $s4, 1	# i++
-			sll $t8, $s4, 2
-			add $t8, $t8, $s0	# &arr[i]
-			sll $t9, $s5, 2
-			add $t9, $t9, $s0	# &arr[j]
+			addi $s4, $s4, 4	# i++
+			add $t8, $s4, $s0	# &arr[i]
 			
 			lw $t6, ($t8)		# Swap
-			lw $t7, ($t9)
-			sw $t6, ($t9)
-			sw $t7, ($t8)
+			sw $t6, ($s7)
+			sw $s6, ($t8)
 		skip3:
 		
-		addi $s5, $s5, 1	# j++
+		addi $s5, $s5, 4	# j++
 		
 		j L2
 		nop
 	L2E:
 	
-	addi $s4, $s4, 1
-	sll $t9, $s4, 2
-	add $t9, $t9, $s0	# &arr[i + 1]
+	addi $s4, $s4, 4	# i++
+	add $t9, $s4, $s0	# &arr[i + 1]
 	
 	sll $t8, $s2, 2
 	add $t8, $t8, $s0	# &arr[high]
@@ -237,7 +235,7 @@ partition:
 	sw $t6, ($t9)
 	sw $t7, ($t8)
 	
-	move $v0, $s4
+	srl $v0, $s4, 2
 	
 	jr $ra
 	nop
