@@ -1173,9 +1173,9 @@ main:
 	
 	### Start insertion sort
 	
-	# $t0 = high iterator (i), from leftwise element+1 to high (4, 8, 12...)
-	# $t1 = adress of high key (s0 + t0)
-	# $t2 = value of high key (t1)
+	# $t0 = key iterator (i), from leftwise element+1 to high (4, 8, 12...)
+	# $t1 = adress of key (s0 + t0)
+	# $t2 = value of key (t1)
 	
 	# $t3 = value of low
 	# $t9 = adress of low
@@ -1196,10 +1196,10 @@ main:
 	nop
 	
 		L4_alt:
-		sw $t3, 4($t9)
+		
 		
 		beq $t9, $s0, insert
-		nop
+		sw $t3, 4($t9)
 		
 		addi $t9, $t9, -4
 		lw $t3, ($t9)
@@ -1207,9 +1207,8 @@ main:
 		bgt $t3, $t2, L4_alt
 		nop
 		
-		sw $t2, 4($t9)
 		j L4E_alt
-		nop
+		sw $t2, 4($t9)
 		
 		insert:
 		sw $t2, ($t9)
