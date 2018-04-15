@@ -1086,6 +1086,8 @@ main:
 		
 		addi $s4, $s1, -1	# i = low - 1
 		sll $s4, $s4, 2
+		add $s4, $s4, $s0	# i = &arr[i]
+		
 		sll $s5, $s1, 2		# j = low
 		add $s5, $s5, $s0	# j = &arr[j]
 		
@@ -1102,11 +1104,11 @@ main:
 			bgt $s6, $s3, skip3	# if(arr[j <= pivot])
 			nop
 				addi $s4, $s4, 4	# i++
-				add $t8, $s4, $s0	# &arr[i]
+				#add $t8, $s4, $s0	# &arr[i]
 				
-				lw $t6, ($t8)		# Swap
+				lw $t6, ($s4)		# Swap
 				sw $t6, ($s5)
-				sw $s6, ($t8)
+				sw $s6, ($s4)
 			skip3:
 			
 			addi $s5, $s5, 4	# j++
@@ -1116,13 +1118,14 @@ main:
 		L2E:
 		
 		addi $s4, $s4, 4	# i++
-		add $t9, $s4, $s0	# &arr[i + 1]
+		#add $t9, $s4, $s0	# &arr[i + 1]
 		
 		lw $t6, ($t5)		# Swap
-		lw $t7, ($t9)
-		sw $t6, ($t9)
+		lw $t7, ($s4)
+		sw $t6, ($s4)
 		sw $t7, ($t5)
 		
+		sub $s4, $s4, $s0
 		srl $v0, $s4, 2
 		
 		### End partitioning
