@@ -45,12 +45,13 @@ main:
 print_data:
 	# Print all data
 	move $t0, $s0
+	addi $t0, $t0, 4
 	addi $t4, $t4, -1
 	sll $t1, $t4, 2
 	add $t1, $t1, $s0
 	L5:
 		li $v0, 1
-		lw $a0, 0($t0)
+		lw $a0, -4($t0)
 		syscall
 		
 		li $v0, 4
@@ -58,7 +59,7 @@ print_data:
 		syscall
 		
 		addi $t0, $t0, 4
-		ble $t0, $t1, L5
+		blt  $t0, $t1, L5
 	
 	jr $ra
 	nop
