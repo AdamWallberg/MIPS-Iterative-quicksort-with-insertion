@@ -1087,15 +1087,20 @@ main:
 		addi $s4, $s1, -1	# i = low - 1
 		sll $s4, $s4, 2
 		sll $s5, $s1, 2		# j = low
+		add $s5, $s5, $s0	# j = &arr[j]
+		
+		sll $t5, $s2, 2		
+		add $t5, $t5, $s0	# t5 = &arr[high]
 		
 		
 		L2: # for(j = low; j < high; j++)
-			srl $t8, $s5, 2
-			bge $t8, $s2, L2E
+			#srl $t8, $s5, 2
+			bge $s5, $t5, L2E
 			nop
 			
-			add $s7, $s5, $s0		# &arr[j]
-			lw $s6, ($s7)			# arr[j]
+			#add $s7, $s5, $s0		# &arr[j]
+			#add $s7, $s5, $zero		# &arr[j]
+			lw $s6, ($s5)			# arr[j]
 			
 			bgt $s6, $s3, skip3	# if(arr[j <= pivot])
 			nop
@@ -1103,7 +1108,7 @@ main:
 				add $t8, $s4, $s0	# &arr[i]
 				
 				lw $t6, ($t8)		# Swap
-				sw $t6, ($s7)
+				sw $t6, ($s5)
 				sw $s6, ($t8)
 			skip3:
 			
@@ -1116,13 +1121,13 @@ main:
 		addi $s4, $s4, 4	# i++
 		add $t9, $s4, $s0	# &arr[i + 1]
 		
-		sll $t8, $s2, 2
-		add $t8, $t8, $s0	# &arr[high]
+		#sll $t8, $s2, 2
+		#add $t8, $t8, $s0	# &arr[high]
 		
-		lw $t6, ($t8)		# Swap
+		lw $t6, ($t5)		# Swap
 		lw $t7, ($t9)
 		sw $t6, ($t9)
-		sw $t7, ($t8)
+		sw $t7, ($t5)
 		
 		srl $v0, $s4, 2
 		
