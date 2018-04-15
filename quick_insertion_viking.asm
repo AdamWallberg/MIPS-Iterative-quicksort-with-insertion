@@ -1002,6 +1002,7 @@ data:
 	.word	0x73bc22fb
 	.word	0x4ab5e24b
 	.word	0xc58ea44a
+
 newline:
 	.asciiz "\n"
 
@@ -1013,7 +1014,6 @@ main:
 	move $t4, $s2 	# t4 = high
 	sll $t4, $t4, 2
 	addi $s2, $s2, -1
-	
 	
 	jal quick_sort_iterative
 	nop
@@ -1034,14 +1034,13 @@ print_data:
 	addi $t4, $t4, -4
 	move $t1, $t4
 	add $t1, $t1, $s0
-	la $t2, newline
 	L5:
 		li $v0, 1
 		lw $a0, -4($t0)
 		syscall
 		
 		li $v0, 4
-		la $a0, ($t2)
+		la $a0, newline
 		syscall
 		
 		addi $t0, $t0, 4
@@ -1071,25 +1070,29 @@ insertion_sort_alt:
 	lw $t2, ($t1)
 	lw $t3, ($t9)
 	
-	bgt $t2, $t3, L4E_alt
+	bge $t2, $t3, L4E_alt
 	nop
 	
 		L4_alt:
-		sw $t3, +4($t9)
-		addi $t9, $t9, -4
+		sw $t3, 4($t9)
 		
-		blt $t9, $s0, insert
+		beq $t9, $s0, insert
 		nop
 		
+		addi $t9, $t9, -4
 		lw $t3, ($t9)
 		
 		bgt $t3, $t2, L4_alt
 		nop
 		
+		sw $t2, 4($t9)
+		j L4E_alt
+		nop
+		
 		insert:
 		sw $t2, ($t9)
-		
 		L4E_alt:
+	
 		
 	addi $t0, $t0, 4
 	bne $t0, $t4, L3_alt
@@ -1102,28 +1105,22 @@ insertion_sort_alt:
 	nop
 	
 insertion_sort:
-	
-	
-	
-	
 	# t0 = i
 	# t1 = j
 	# t3 = key
 	# t4 = high
 	
-	li $t0, 4
+	li $t0, 1
+	addi $t2, $s0, 4
 	
 	L3:
-	beq $t0, $t4, L3E
+	bge $t0, $t4, L3E
 	nop
+		lw $t3, 0($t2)		# key = arr[i];
 		
-		move $t3, $t0
-		add $t3, $t3, $s0
-		lw $t3, ($t3)		# key = arr[i];
+		addi $t1, $t0, -1	# j = i-1;
 		
-		addi $t1, $t0, -4	# j = i-1;
-		
-		move $t5, $t1
+		sll $t5, $t1, 2
 		add $t5, $t5, $s0
 		lw $t5, 0($t5)		# arr[j]
 		
@@ -1132,18 +1129,14 @@ insertion_sort:
 		nop
 		ble $t5, $t3, L4E
 		nop
-			addi $t6, $t1, 4
+			addi $t6, $t1, 1
+			sll $t6, $t6, 2
 			add $t6, $t6, $s0	# &arr[j + 1]
 			
-			move $t5, $t1
-			add $t5, $t5, $s0	# &arr[j]
-			lw $t5, 0($t5)		# arr[j]
-			
 			sw $t5, 0($t6)		# arr[j+1] = arr[j];
+			addi $t1, $t1, -1	# j--
 			
-			addi $t1, $t1, -4	# j = j - 1
-			
-			move $t5, $t1
+			sll $t5, $t1, 2
 			add $t5, $t5, $s0	# &arr[j]
 			lw $t5, 0($t5)		# arr[j]
 			
@@ -1151,11 +1144,14 @@ insertion_sort:
 			nop
 		L4E:
 		
-		addi $t6, $t1, 4
+		addi $t6, $t1, 1
+		sll $t6, $t6, 2
 		add $t6, $t6, $s0	# &arr[j + 1]
 		sw $t3, 0($t6)	# arr[j+1] = key;
 		
-		addi $t0, $t0, 4
+		addi $t0, $t0, 1
+		addi $t2, $t2, 4
+		
 		j L3
 		nop
 	L3E:
@@ -1183,76 +1179,107 @@ quick_sort_iterative:
 	sw $s2, 4($t1)	# high
 	addi $t1, $t1, 8
 	
-	blt $t1, $t0, L1E
 	L1:
+		blt $t1, $t0, L1E
 		nop
 		
 		addi $t1, $t1, -8
 		lw $s2, 4($t1)		# high = stack[top--]
 		lw $s1, 0($t1)		# low = stack[top--]
 		
-		#start of partitioning ------------------- ------------------- -------------------
+		
+		#start of partitioning------------------------------------------------------------------------------------
 		# s1 = low
 		# s2 = high
 		# s3 = pivot
 		# s4 = i
 		# s5 = j
-		sll $s3, $s2, 2
-		add $s3, $s3, $s0	# &arr[high]
-		lw $s3, ($s3)		# arr[high]
+		
+		sll $s3, $s1, 2		# &arr[low]
+		add $s3, $s3, $s0
+		sll $s4, $s2, 2		# &arr[high]
+		add $s4, $s4, $s0
+		
+		lw $s5, 0($s3)		# arr[low]
+		lw $s6, 4($s3)		# arr[low + 1]
+		
+		# TODO: compare with bgt
+		bge $s6, $s5, skip4	# If A > B
+		nop
+			sw $s5, 4($s3)	# Switch A and B
+			sw $s6, 0($s3)
+		skip4:
+		
+		lw $s5, 4($s3)		# arr[low + 1]
+		lw $s6, 0($s4)		# arr[high]
+		
+		bge $s6, $s5, skip5	# If B > C
+		nop
+			sw $s5, 0($s4)	# Switch B and C
+			sw $s6, 4($s3)
+		skip5:
+		
+		lw $s5, 0($s3)
+		lw $s6, 0($s4)
+		
+		bge $s5, $s6, skip6 # If C > A
+		nop
+			sw $s5, 0($s4)
+			sw $s6, 0($s3)
+		skip6:
+
+		lw $s3, ($s4)		# arr[high]
+		
 		addi $s4, $s1, -1	# i = low - 1
-		move $s5, $s1		# j = low
-	
-	
+		sll $s4, $s4, 2
+		sll $s5, $s1, 2		# j = low
+		
+		
 		L2: # for(j = low; j < high; j++)
-			bge $s5, $s2, L2E
+			srl $t8, $s5, 2
+			bge $t8, $s2, L2E
 			nop
-		
-			sll $s6, $s5, 2
-			add $s6, $s6, $s0
-			lw $s6, ($s6)			# arr[j]
-		
+			
+			add $s7, $s5, $s0		# &arr[j]
+			lw $s6, ($s7)			# arr[j]
+			
 			bgt $s6, $s3, skip3	# if(arr[j <= pivot])
 			nop
-				addi $s4, $s4, 1	# i++
-				sll $t8, $s4, 2
-				add $t8, $t8, $s0	# &arr[i]
-				sll $t9, $s5, 2
-				add $t9, $t9, $s0	# &arr[j]
-			
+				addi $s4, $s4, 4	# i++
+				add $t8, $s4, $s0	# &arr[i]
+				
 				lw $t6, ($t8)		# Swap
-				lw $t7, ($t9)
-				sw $t6, ($t9)
-				sw $t7, ($t8)
+				sw $t6, ($s7)
+				sw $s6, ($t8)
 			skip3:
-		
-			addi $s5, $s5, 1	# j++
-		
+			
+			addi $s5, $s5, 4	# j++
+			
 			j L2
 			nop
 		L2E:
-	
-		addi $s4, $s4, 1
-		sll $t9, $s4, 2
-		add $t9, $t9, $s0	# &arr[i + 1]
-	
+		
+		addi $s4, $s4, 4	# i++
+		add $t9, $s4, $s0	# &arr[i + 1]
+		
 		sll $t8, $s2, 2
 		add $t8, $t8, $s0	# &arr[high]
-	
+		
 		lw $t6, ($t8)		# Swap
 		lw $t7, ($t9)
 		sw $t6, ($t9)
 		sw $t7, ($t8)
-	
-		move $v0, $s4
-		#end of partitioning ------------------- ------------------- -------------------
+		
+		srl $v0, $s4, 2
+		
+		#END OF PARTITIONING------------------------------------------------------------------------------------
 		
 		addi $v0, $v0, -1
 		
 		ble $v0, $s1, skip1
 		nop
 		sub $s7, $v0, $s1
-		blt $s7, 10, skip1
+		blt $s7, 12, skip1
 		nop
 			addi $t1, $t1, 8
 			sw $s1, -8($t1)
@@ -1264,14 +1291,13 @@ quick_sort_iterative:
 		bge $v0, $s2, skip2
 		nop
 		sub $s7, $s2, $v0
-		blt $s7, 10, skip2
+		blt $s7, 12, skip2
 		nop
 			addi $t1, $t1, 8
 			sw $v0, -8($t1)
 			sw $s2, -4($t1)
 		skip2:
 		
-		blt $t1, $t0, L1E
 		j L1
 		nop
 	L1E:
@@ -1281,14 +1307,3 @@ quick_sort_iterative:
 	
 	jr $ra
 	nop
-	
-partition:
-
-	
-	
-	
-	
-	
-	
-	
-	
