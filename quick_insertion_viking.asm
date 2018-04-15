@@ -1008,6 +1008,12 @@ newline:
 
 	.text
 main:
+# This sorting algorithm is using iterative quicksort combined
+# with insertion sort. When the subpartitions reach a size smaller
+# than 17 elements, the quicksort stops sorting that partition, and 
+# leaves it for the insertion sort to take care of.
+# Disclaimer: 
+
 	la $s0, data 	# Data pointer
 	li $s1, 0		# Low
 	lw $s2, datalen	# High
@@ -1015,9 +1021,9 @@ main:
 	sll $t4, $t4, 2
 	addi $s2, $s2, -1
 	
-	### Start quick sort
+	### Start quick sort ###
 	
-	# Allocate stack on heap
+	# Allocate virtual stack on heap
 	sll $a0, $s2, 2
 	addi $a0, $a0, -4
 	li $v0, 9
