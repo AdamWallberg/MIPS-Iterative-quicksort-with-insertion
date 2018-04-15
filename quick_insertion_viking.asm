@@ -1015,153 +1015,7 @@ main:
 	sll $t4, $t4, 2
 	addi $s2, $s2, -1
 	
-	jal quick_sort_iterative
-	nop
-	
-	jal insertion_sort_alt
-	nop
-	
-	jal print_data
-	nop
-
-	li $v0, 10
-	syscall
-	
-print_data:
-	# Print all data
-	move $t0, $s0
-	addi $t0, $t0, 4
-	addi $t4, $t4, -4
-	move $t1, $t4
-	add $t1, $t1, $s0
-	L5:
-		li $v0, 1
-		lw $a0, -4($t0)
-		syscall
-		
-		li $v0, 4
-		la $a0, newline
-		syscall
-		
-		addi $t0, $t0, 4
-		blt  $t0, $t1, L5
-	
-	jr $ra
-	nop
-	
-insertion_sort_alt:
-	
-	# $t0 = high iterator (i), from leftwise element+1 to high (4, 8, 12...)
-	# $t1 = adress of high key (s0 + t0)
-	# $t2 = value of high key (t1)
-	
-	# $t3 = value of low
-	# $t9 = adress of low
-	
-	addi $sp, $sp, -4
-	sw $ra, ($sp)
-	
-	xor $t0, $t0, $t0
-	addi $t0, $t0, 4
-	
-	L3_alt:
-	add $t1, $s0, $t0
-	addi $t9, $t1, -4 #j = i-1
-	lw $t2, ($t1)
-	lw $t3, ($t9)
-	
-	bge $t2, $t3, L4E_alt
-	nop
-	
-		L4_alt:
-		sw $t3, 4($t9)
-		
-		beq $t9, $s0, insert
-		nop
-		
-		addi $t9, $t9, -4
-		lw $t3, ($t9)
-		
-		bgt $t3, $t2, L4_alt
-		nop
-		
-		sw $t2, 4($t9)
-		j L4E_alt
-		nop
-		
-		insert:
-		sw $t2, ($t9)
-		L4E_alt:
-	
-		
-	addi $t0, $t0, 4
-	bne $t0, $t4, L3_alt
-	nop
-	L3E_alt:
-	
-	lw $ra, ($sp)
-	addi $sp, $sp, 4
-	jr $ra
-	nop
-	
-insertion_sort:
-	# t0 = i
-	# t1 = j
-	# t3 = key
-	# t4 = high
-	
-	li $t0, 1
-	addi $t2, $s0, 4
-	
-	L3:
-	bge $t0, $t4, L3E
-	nop
-		lw $t3, 0($t2)		# key = arr[i];
-		
-		addi $t1, $t0, -1	# j = i-1;
-		
-		sll $t5, $t1, 2
-		add $t5, $t5, $s0
-		lw $t5, 0($t5)		# arr[j]
-		
-		L4:
-		bltz $t1, L4E
-		nop
-		ble $t5, $t3, L4E
-		nop
-			addi $t6, $t1, 1
-			sll $t6, $t6, 2
-			add $t6, $t6, $s0	# &arr[j + 1]
-			
-			sw $t5, 0($t6)		# arr[j+1] = arr[j];
-			addi $t1, $t1, -1	# j--
-			
-			sll $t5, $t1, 2
-			add $t5, $t5, $s0	# &arr[j]
-			lw $t5, 0($t5)		# arr[j]
-			
-			j L4
-			nop
-		L4E:
-		
-		addi $t6, $t1, 1
-		sll $t6, $t6, 2
-		add $t6, $t6, $s0	# &arr[j + 1]
-		sw $t3, 0($t6)	# arr[j+1] = key;
-		
-		addi $t0, $t0, 1
-		addi $t2, $t2, 4
-		
-		j L3
-		nop
-	L3E:
-	
-	jr $ra
-	nop	
-
-quick_sort_iterative:
-	addi $sp, $sp, -4
-	sw $ra, ($sp)
+	### Start quick sort
 	
 	# Allocate stack on heap
 	sll $a0, $s2, 2
@@ -1188,7 +1042,8 @@ quick_sort_iterative:
 		lw $s1, 0($t1)		# low = stack[top--]
 		
 		
-		#start of partitioning------------------------------------------------------------------------------------
+		### Start partitioning
+		
 		# s1 = low
 		# s2 = high
 		# s3 = pivot
@@ -1203,7 +1058,6 @@ quick_sort_iterative:
 		lw $s5, 0($s3)		# arr[low]
 		lw $s6, 4($s3)		# arr[low + 1]
 		
-		# TODO: compare with bgt
 		bge $s6, $s5, skip4	# If A > B
 		nop
 			sw $s5, 4($s3)	# Switch A and B
@@ -1272,7 +1126,7 @@ quick_sort_iterative:
 		
 		srl $v0, $s4, 2
 		
-		#END OF PARTITIONING------------------------------------------------------------------------------------
+		### End partitioning
 		
 		addi $v0, $v0, -1
 		
@@ -1305,5 +1159,83 @@ quick_sort_iterative:
 	lw $ra, ($sp)
 	addi $sp, $sp, 4
 	
-	jr $ra
+	### End quick sort
+	
+	### Start insertion sort
+	
+	# $t0 = high iterator (i), from leftwise element+1 to high (4, 8, 12...)
+	# $t1 = adress of high key (s0 + t0)
+	# $t2 = value of high key (t1)
+	
+	# $t3 = value of low
+	# $t9 = adress of low
+	
+	addi $sp, $sp, -4
+	sw $ra, ($sp)
+	
+	xor $t0, $t0, $t0
+	addi $t0, $t0, 4
+	
+	L3_alt:
+	add $t1, $s0, $t0
+	addi $t9, $t1, -4 #j = i-1
+	lw $t2, ($t1)
+	lw $t3, ($t9)
+	
+	bge $t2, $t3, L4E_alt
 	nop
+	
+		L4_alt:
+		sw $t3, 4($t9)
+		
+		beq $t9, $s0, insert
+		nop
+		
+		addi $t9, $t9, -4
+		lw $t3, ($t9)
+		
+		bgt $t3, $t2, L4_alt
+		nop
+		
+		sw $t2, 4($t9)
+		j L4E_alt
+		nop
+		
+		insert:
+		sw $t2, ($t9)
+		L4E_alt:
+	
+		
+	addi $t0, $t0, 4
+	bne $t0, $t4, L3_alt
+	nop
+	L3E_alt:
+	
+	lw $ra, ($sp)
+	addi $sp, $sp, 4
+	
+	### END
+	
+	### Print all data
+	
+	move $t0, $s0
+	addi $t0, $t0, 4
+	addi $t4, $t4, -4
+	move $t1, $t4
+	add $t1, $t1, $s0
+	L5:
+		li $v0, 1
+		lw $a0, -4($t0)
+		syscall
+		
+		li $v0, 4
+		la $a0, newline
+		syscall
+		
+		addi $t0, $t0, 4
+		blt  $t0, $t1, L5
+
+	### End printing
+
+	li $v0, 10
+	syscall
