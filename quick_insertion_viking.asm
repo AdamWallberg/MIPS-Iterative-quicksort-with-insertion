@@ -1103,7 +1103,7 @@ main:
 		
 		L2: # for(j = low; j < high; j++)
 			bge $s5, $t5, L2E
-			nop
+			#nop
 			
 			lw $s6, ($s5)			# arr[j]
 			
