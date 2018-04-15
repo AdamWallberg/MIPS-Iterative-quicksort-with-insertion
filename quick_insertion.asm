@@ -156,7 +156,7 @@ quick_sort_iterative:
 		ble $v0, $s1, skip1
 		nop
 		sub $s7, $v0, $s1
-		blt $s7, 10, skip1
+		blt $s7, 12, skip1
 		nop
 			addi $t1, $t1, 8
 			sw $s1, -8($t1)
@@ -168,7 +168,7 @@ quick_sort_iterative:
 		bge $v0, $s2, skip2
 		nop
 		sub $s7, $s2, $v0
-		blt $s7, 10, skip2
+		blt $s7, 12, skip2
 		nop
 			addi $t1, $t1, 8
 			sw $v0, -8($t1)
@@ -191,9 +191,41 @@ partition:
 	# s3 = pivot
 	# s4 = i
 	# s5 = j
-	sll $s3, $s2, 2
-	add $s3, $s3, $s0	# &arr[high]
-	lw $s3, ($s3)		# arr[high]
+	
+	sll $s3, $s1, 2		# &arr[low]
+	add $s3, $s3, $s0
+	sll $s4, $s2, 2		# &arr[high]
+	add $s4, $s4, $s0
+	
+	lw $s5, 0($s3)		# arr[low]
+	lw $s6, 4($s3)		# arr[low + 1]
+	
+	# TODO: compare with bgt
+	bge $s6, $s5, skip4	# If A > B
+	nop
+		sw $s5, 4($s3)	# Switch A and B
+		sw $s6, 0($s3)
+	skip4:
+	
+	lw $s5, 4($s3)		# arr[low + 1]
+	lw $s6, 0($s4)		# arr[high]
+	
+	bge $s6, $s5, skip5	# If B > C
+	nop
+		sw $s5, 0($s4)	# Switch B and C
+		sw $s6, 4($s3)
+	skip5:
+	
+	lw $s5, 0($s3)
+	lw $s6, 0($s4)
+	
+	bge $s5, $s6, skip6 # If C > A
+	nop
+		sw $s5, 0($s4)
+		sw $s6, 0($s3)
+	skip6:
+
+	lw $s3, ($s4)		# arr[high]
 	
 	addi $s4, $s1, -1	# i = low - 1
 	sll $s4, $s4, 2
