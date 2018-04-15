@@ -1,0 +1,39 @@
+	.data
+datalen:
+	.word	0x00000020 # 32
+data:
+	.word	0x0000000c
+	.word	0x00000022
+	.word	0x00000036
+	.word	0x00000002
+	.word	0x00000003
+	.word	0x00000001
+	.word	0x00000007
+	.word	0x00000000
+	.word	0x00000006
+	.word	0x00000009
+	.word	0x0000000d
+	.word	0x00000002
+	.word	0x0000000b
+	.word	0x0000000c
+	.word	0x00000003
+	.word	0x0000000a
+	.word	0xffff7e81
+	.word	0x00000011
+	.word	0x00000002
+	.word	0xffff0001
+	.word	0x00000000
+	.word	0x00000001
+	.word	0xffffffff
+	.word	0x00000000
+	.word	0xe3456687
+	.word	0xa001aa88
+	.word	0xf0e159ea
+	.word	0x9152137b
+	.word	0xaab385a1
+	.word	0x31093c54
+	.word	0x42102f37
+	.word	0x00ee655b
+
+.globl datalen
+.globl data
