@@ -1008,11 +1008,15 @@ newline:
 
 	.text
 main:
+# Written by Adam Vallberg and Viking Renhammar Metus
+#
 # This sorting algorithm is using iterative quicksort combined
 # with insertion sort. When the subpartitions reach a size smaller
 # than 17 elements, the quicksort stops sorting that partition, and 
 # leaves it for the insertion sort to take care of.
-# Disclaimer: 
+# Disclaimer: Readability is not prioritized. So subroutines have
+# been inlined, and conventions relating to registers have not
+# been followed.
 
 	la $s0, data 	# Data pointer
 	li $s1, 0		# Low
