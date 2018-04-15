@@ -1094,12 +1094,9 @@ main:
 		
 		
 		L2: # for(j = low; j < high; j++)
-			#srl $t8, $s5, 2
 			bge $s5, $t5, L2E
 			nop
 			
-			#add $s7, $s5, $s0		# &arr[j]
-			#add $s7, $s5, $zero		# &arr[j]
 			lw $s6, ($s5)			# arr[j]
 			
 			bgt $s6, $s3, skip3	# if(arr[j <= pivot])
@@ -1120,9 +1117,6 @@ main:
 		
 		addi $s4, $s4, 4	# i++
 		add $t9, $s4, $s0	# &arr[i + 1]
-		
-		#sll $t8, $s2, 2
-		#add $t8, $t8, $s0	# &arr[high]
 		
 		lw $t6, ($t5)		# Swap
 		lw $t7, ($t9)
