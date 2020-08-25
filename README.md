@@ -1,6 +1,6 @@
 # MIPS Iterative Quicksort with Insertion
 
-This is a sorting algorithm implemented in MIPS assembly as a University assignment. It's written in MARS 4.2 with support for delayed branching. 
+This is a sorting algorithm implemented in MIPS assembly for a University assignment/competition. It's written in MARS 4.2 with support for delayed branching.
 
 Some of the optimizations we implemented were:
 - Using iteration instead of recursion, this reduced stack overhead.
@@ -13,4 +13,4 @@ These are some nice references we used:<br>
 https://www.geeksforgeeks.org/iterative-quick-sort/<br>
 https://en.wikipedia.org/wiki/Quicksort<br>
 <br>
-**Warning:** Ugly code. We prioritized optimization since this was a competition, so all subroutines have been inlined, and register conventions have been ignored.
+**Disclaimer:** Really ugly code. We prioritized optimization since this was a competition, so all subroutines have been inlined, and register conventions have been ignored. Also, set tab size to 4 for readability!
